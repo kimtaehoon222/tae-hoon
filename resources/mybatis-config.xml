@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- xml 문서의 유효성 체크를 위해 설정, doctype -->
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<!-- configuration : mybatis 설정과 관련된 기본 셋팅들을 선언할 수 있는 영역  -->
+<configuration>
+	<!-- settings : mybatis 설정과 관련된 기본 셋팅을 선언 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL"/>
+	</settings>
+	
+		<!-- environments : DB연결에 대한 설정정보 -->
+		<!-- default : 연결 설정 정보를 여러개 생성하여 아이디로 구분하고 기본으로 연결할 설정정보를 지정하는 속성  -->
+		<environments default="development">
+	
+	 	<!-- environment : id를 구분하여 연결할 DB를 여러 개 구성할 수 있다. -->
+	    <environment id="development">
+	   	    <!-- 
+				마이바티스의 핵심이 되는 설정은 트랜잭션을 제어하기 위한 TransactionManager와 함께 
+				데이터 베이스 Connection 인스턴스를 가져오기 위한 DataSource를 포함
+				
+				* TransactionManager는 JDBC와 MANAGED 둘 중 하나를 선택할 수 있음
+				- JDBC : JDBC가 commit과 rollback의 기증을 직접 사용 가능하게 하는 옵션(수동 commit)
+						   트랜잭션의 스코프를 관리하기 위해 dataSource로 부터 커넥션을 가져온다.
+				
+				- MANAGED : 트랜잭션에 대해 어떠한 영향도 행사하지 않는다는 옵션(자동 commit)
+							컨테이너가 트랜잭션의 모든 생명주기를 관리한다. 디폴트로 커넥션을 닫아줌
+			 -->
+	    
+	      <transactionManager type="JDBC"/>
+	      <!-- POOLED : 하나의 객체를 생성 해두고 데이터베이스와 연결되어있는 것을 재사용한다?  -->
+	      <dataSource type="POOLED">
+	      	<!-- property : 외부에 있는 파일의 내용을 불러올때 사용 name : 명칭 value : key값-->
+            <property name="driver" value="oracle.jdbc.driver.OracleDriver"/> 
+	        <property name="url" value="jdbc:oracle:thin:@localhost:1521:xe"/>
+	        <property name="username" value="mybatis"/>
+	        <property name="password" value="mybatis"/>
+	      </dataSource>
+	    </environment>
+  </environments>
+
+
+</configuration>
