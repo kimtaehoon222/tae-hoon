@@ -9,6 +9,10 @@
 		<setting name="jdbcTypeForNull" value="NULL"/>
 	</settings>
 	
+	<typeAliases>
+		<typeAlias type="com.uni.mybatis.member.model.dto.Member" alias="Member"/>
+		<typeAlias type="com.uni.mybatis.board.model.dto.Board" alias="Board"/>
+	</typeAliases>
 		<!-- environments : DB연결에 대한 설정정보 -->
 		<!-- default : 연결 설정 정보를 여러개 생성하여 아이디로 구분하고 기본으로 연결할 설정정보를 지정하는 속성  -->
 		<environments default="development">
@@ -39,5 +43,10 @@
 	    </environment>
   </environments>
 
+
+	<mappers>
+		<mapper resource="/mappers/member-mapper.xml"/>
+		<mapper resource="/mappers/board-mapper.xml"/>
+	</mappers>
 
 </configuration>
