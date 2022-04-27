@@ -26,5 +26,69 @@
 		ORDER BY BOARD_NO DESC
 	</select>
 
+	<select id="getSearchListCount" parameterType="SearchCondition" resultType="_int">
+		SELECT COUNT(*)
+		FROM BOARD B
+		JOIN MEMBER ON(BOARD_WRITER=USER_NO)
+		WHERE B.STATUS = 'Y'
+		<!-- if : 필요한 조건이 1개 이상일 시 if 구문을 여러 개 사용 가능 -->
+		<!-- if test : 조건이 들어감 -->
+
+		<if test = "writer != null">
+		AND USER_ID LIKE '%'||#{writer}||'%'
+		</if>
+		<if test = "title != null">
+		AND BOARD_TITLE LIKE '%'||#{title}||'%'
+		</if>
+		<if test = "content != null">
+		AND BOARD_CONTENT LIKE '%'||#{content}||'%'
+		</if>
+	
+	</select>
+	
+	<select id="selectSearchList" parameterType="SearchCondition" resultMap="boardResultSet">
+		SELECT BOARD_NO, BOARD_TITLE, USER_ID, COUNT, CREATE_DATE
+		FROM BOARD B
+		JOIN MEMBER ON(BOARD_WRITER=USER_NO)
+		
+		<!-- trim : 쿼리 구문의 특정 부분을 없앨 때 쓰인다 -->
+		<!-- prefix : 시작할 단어  -->
+		<!-- prefixOverrides : 맨 앞에 제거해야할 값 -->
+		<!-- suffixOverrides : 마지막에 제거해야할 값 -->
+		<trim prefix="WHERE" prefixOverrides="AND|OR">
+			<!-- choose : 딱 한 가지만을 수행하고자 할 때 -->
+			<choose> 
+				<when test = "writer != null">
+				      AND USER_ID LIKE '%'||#{writer}||'%'
+				</when>
+				<when test = "title != null">
+				      AND BOARD_TITLE LIKE '%'||#{title}||'%'
+				</when>
+				<otherwise>
+				      AND BOARD_CONTENT LIKE '%'||#{content}||'%'
+				</otherwise>
+			</choose>
+		</trim>
+		AND B.STATUS='Y'
+		ORDER BY BOARD_NO DESC
+	</select>
+	
+	<select id="selectBoard" resultMap="boardResultSet">
+		<!-- [CDATA[]]> : [] 안에 있는 문장은 파싱되지 않고 그대로 문자열로 출력된다. 부등호를 사용하려고 사용한다 -->
+		<![CDATA[ 
+		 SELECT BOARD_NO, BOARD_TITLE, USER_ID, COUNT, CREATE_DATE, BOARD_CONTENT
+		 FROM BOARD B
+		 JOIN MEMBER ON(BOARD_WRITER=USER_NO)
+		 WHERE B.STATUS <> 'N' 
+		 AND BOARD_NO= #{bno}
+		 ]]>
+		 <!-- $ : 있는 그대로의 값이 보여짐, # : '' 붙어서 나온다 , 문자열에 경우에는 #을 사용해야함-->
+	</select>
+	
+	<update id="updateCount" parameterType="_int" >
+		UPDATE BOARD 
+		SET COUNT = COUNT+1 
+		WHERE BOARD_NO= #{bno}
+	</update>
 
 </mapper>
