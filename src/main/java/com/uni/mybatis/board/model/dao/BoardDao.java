@@ -7,6 +7,7 @@ import org.apache.ibatis.session.SqlSession;
 
 import com.uni.mybatis.board.model.dto.Board;
 import com.uni.mybatis.board.model.dto.PageInfo;
+import com.uni.mybatis.board.model.dto.SearchCondition;
 
 public class BoardDao {
 
@@ -54,6 +55,34 @@ public class BoardDao {
 		
 		
 		return (ArrayList)sqlSession.selectList("boardMapper.selectList",null, rowBounds);
+	}
+	
+	public int getSearchListCount(SqlSession sqlSession, SearchCondition sc) {
+		
+		return sqlSession.selectOne("boardMapper.getSearchListCount",sc);
+	}
+
+	public ArrayList<Board> selectSearchList(SqlSession sqlSession, SearchCondition sc, PageInfo pi) {
+		
+		//몇개의 게시글을 건너 뛰고 조회할 지에 대해 계산
+		int offset = (pi.getCurrentPage()-1)*pi.getBoardLimit();
+		
+		//mybatis에서 제공하는 RowBounds : 전체를 조회해와서 몇 개의 게시글을 건너뛰고 조회할지 계산을 내부적으로 해준다.
+		RowBounds rowBounds = new RowBounds(offset, pi.getBoardLimit());//offset정보와 뿌려질 게시글을 넣어준다.
+		
+		
+		return (ArrayList)sqlSession.selectList("boardMapper.selectSearchList",sc, rowBounds);
+	}
+
+	public Board selectBoard(SqlSession sqlSession, int bno) {
+		
+		return sqlSession.selectOne("boardMapper.selectBoard",bno);
+		
+	}
+
+	public int updateCount(SqlSession sqlSession, int bno) {
+		
+		return sqlSession.update("boardMapper.updateCount",bno);
 	}
 
 }
